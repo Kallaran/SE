@@ -136,8 +136,14 @@ public class AirSimulation {
 
 	// Agent4: the virus
 	public void agent4() throws InterruptedException {
-		// to be completed ...
-
+		for (int i = 0; i < this.a.getNumberOfRows(); i++) {
+			for (int j = 0; j < this.a.getSeatsPerRow(); j++) {
+				Customer c = this.a.getCustomer(i, j);
+				this.a.freeSeat(i, j);
+				if (c != null)
+					this.a.add(c, i, j);
+			}
+		}
 		this.nAgent4++;
 	}
 
@@ -207,7 +213,7 @@ public class AirSimulation {
 
 		long begin = System.currentTimeMillis();
 
-		//System.out.println("\n** Sequential execution **\n");
+		// System.out.println("\n** Sequential execution **\n");
 		if (args != null && args.length > 0 && args[0] != null && args[0].equals("animation")) {
 			AirSimulation s = new AirSimulation();
 			ThreadAgent T2 = s.new ThreadAgent("Thread-agent2", s);
