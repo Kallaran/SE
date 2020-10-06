@@ -7,6 +7,7 @@
  */
 
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 import java.util.ArrayList;
 
 public class AirSimulation {
@@ -16,6 +17,8 @@ public class AirSimulation {
 	private int nAgent4;
 	private Aircraft a;
 	public final int nagents = 4;
+
+	static Semaphore semaphore = new Semaphore(1);
 
 	// Constructor
 	public AirSimulation() {
@@ -174,30 +177,59 @@ public class AirSimulation {
 			this.s = s;
 		}
 
+		@Override
 		public void run() {
-			try {
-				switch (threadName) {
-				case "Thread-agent2":
-					while (!s.getAircraftRef().isFlightFull()) {
-						s.agent2();
+
+			switch (threadName) {
+			case "Thread-agent2":
+				while (!s.getAircraftRef().isFlightFull()) {
+					try {
+						AirSimulation.semaphore.acquire();
+						try {
+							s.agent2();
+						} finally {
+							// calling release() after a successful acquire()
+							AirSimulation.semaphore.release();
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
 					}
-					break;
-				case "Thread-agent3":
-					while (!s.getAircraftRef().isFlightFull()) {
-						s.agent3();
-					}
-					break;
-				case "Thread-agent4":
-					while (!s.getAircraftRef().isFlightFull()) {
-						s.agent4();
-					}
-					break;
-				default:
-					System.out.println("no match");
 				}
-			} catch (InterruptedException e) {
-				System.out.println("Thread " + threadName + " interrupted.");
+				break;
+			case "Thread-agent3":
+				while (!s.getAircraftRef().isFlightFull()) {
+					try {
+						AirSimulation.semaphore.acquire();
+						try {
+							s.agent3();
+						} finally {
+							// calling release() after a successful acquire()
+							AirSimulation.semaphore.release();
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
+			case "Thread-agent4":
+				while (!s.getAircraftRef().isFlightFull()) {
+					try {
+						AirSimulation.semaphore.acquire();
+						try {
+							// s.agent4();
+						} finally {
+							// calling release() after a successful acquire()
+							AirSimulation.semaphore.release();
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
+			default:
+				System.out.println("no match");
 			}
+
 		}
 
 		public void start() {
@@ -223,7 +255,17 @@ public class AirSimulation {
 			T3.start();
 			T4.start();
 			while (!s.a.isFlightFull()) {
-				s.agent1();
+				try {
+					AirSimulation.semaphore.acquire();
+					try {
+						s.agent1();
+					} finally {
+						// calling release() after a successful acquire()
+						AirSimulation.semaphore.release();
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				System.out.println(s + s.a.cleanString());
 				Thread.sleep(100);
 			}
@@ -237,7 +279,17 @@ public class AirSimulation {
 			T3.start();
 			T4.start();
 			while (!s.a.isFlightFull()) {
-				s.agent1();
+				try {
+					AirSimulation.semaphore.acquire();
+					try {
+						s.agent1();
+					} finally {
+						// calling release() after a successful acquire()
+						AirSimulation.semaphore.release();
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 			System.out.println(s);
 		}
