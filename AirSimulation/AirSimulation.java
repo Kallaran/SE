@@ -216,7 +216,7 @@ public class AirSimulation {
 					try {
 						AirSimulation.semaphore.acquire();
 						try {
-							// s.agent4();
+							s.agent4();
 						} finally {
 							// calling release() after a successful acquire()
 							AirSimulation.semaphore.release();
@@ -240,12 +240,13 @@ public class AirSimulation {
 		}
 	}
 
-	// Simulation in sequential (main)
 	public static void main(String[] args) throws InterruptedException {
 
-		long begin = System.currentTimeMillis();
+		// Simulation in Multi-threading
+		
+		System.out.println("\n** Multi-threading  execution **\n");
 
-		// System.out.println("\n** Sequential execution **\n");
+		long beginMultithreading = System.currentTimeMillis();
 		if (args != null && args.length > 0 && args[0] != null && args[0].equals("animation")) {
 			AirSimulation s = new AirSimulation();
 			ThreadAgent T2 = s.new ThreadAgent("Thread-agent2", s);
@@ -293,8 +294,48 @@ public class AirSimulation {
 			}
 			System.out.println(s);
 		}
-		long end = System.currentTimeMillis();
-		long time = end - begin;
-		System.out.println(time);
+		long endMultithreading = System.currentTimeMillis();
+		long timeMultithreading = endMultithreading - beginMultithreading;
+
+		
+		
+		/*
+		// Simulation in sequential
+		
+		long beginsequential = System.currentTimeMillis();
+
+		System.out.println("\n** Sequential execution **\n");
+		if (args != null && args.length > 0 && args[0] != null && args[0].equals("animation")) {
+			AirSimulation s = new AirSimulation();
+			while (!s.a.isFlightFull()) {
+				s.agent1();
+				s.agent2();
+				s.agent3();
+				s.agent4();
+				System.out.println(s + s.a.cleanString());
+				Thread.sleep(100);
+			}
+			System.out.println(s);
+		} else {
+			AirSimulation s = new AirSimulation();
+			while (!s.a.isFlightFull()) {
+				s.agent1();
+				s.agent2();
+				s.agent3();
+				s.agent4();
+			}
+			System.out.println(s);
+		}
+
+		long endsequential = System.currentTimeMillis();
+		long timesequential = endsequential - beginsequential;
+		
+		System.out.println("timesequential : " + timesequential);
+
+		*/
+
+		System.out.println("timeMultithreading : " + timeMultithreading);
+
 	}
+
 }
